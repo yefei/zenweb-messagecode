@@ -13,6 +13,10 @@ export interface MessageCodeResolver {
   format(code: string, params:? { [key: string]: any }): string;
 }
 
+export interface MessageCodeOption {
+  codes?: { [key: string]: string };
+}
+
 declare module 'koa' {
   interface BaseContext {
     messageCodeResolver: MessageCodeResolver;
