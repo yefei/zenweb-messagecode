@@ -1,0 +1,33 @@
+{
+  "name": "@zenweb/messagecode",
+  "version": "1.0.0",
+  "description": "Zenweb MessageCode module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "YeFei",
+    "email": "316606233@qq.com"
+  },
+  "keywords": [
+    "web",
+    "app",
+    "http",
+    "framework",
+    "koa"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yefei/zenweb-messagecode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yefei/zenweb-messagecode/issues"
+  },
+  "devDependencies": {
+    "@zenweb/core": "^1.2.2",
+    "eslint": "^7.16.0",
+    "koa": "^2.13.1"
+  }
+}
