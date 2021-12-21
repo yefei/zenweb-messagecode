@@ -1,4 +1,9 @@
+import fs = require('node:fs/promises');
 import { Core } from '@zenweb/core';
+import Debug from 'debug';
+import path = require('node:path');
+
+const debug = Debug('zenweb:messagecode')
 
 export type CodeMap = { [key: string]: string };
 export type ParamMap = { [key: string]: any };
@@ -54,14 +59,28 @@ class MessageCodeResolver {
 
 export function setup(core: Core, option?: MessageCodeOption) {
   const resolver = new MessageCodeResolver();
-  core.setupAfter(() => {
+  core.setupAfter(async () => {
     for (const { name } of core.loaded) {
       try {
-        const codes = require(`${name}/message-codes`);
-        resolver.assign(codes);
-      } catch (e) {
-        //
+        var modPath = require.resolve(`${name}`);
+      } catch {
+        debug('can not resolve module:', name);
+        continue;
       }
+      const codeFile = path.join(modPath, 'message-codes.json');
+      try {
+        await fs.access(codeFile);
+      } catch {
+        continue;
+      }
+      try {
+        var codes = JSON.parse(await fs.readFile(codeFile, { encoding: 'utf-8' }));
+      } catch (e) {
+        debug('load message-codes error:', e);
+        continue;
+      }
+      resolver.assign(codes);
+      debug('loaded message-codes: %s total: %d', modPath, Object.keys(codes).length);
     }
     if (option && option.codes) {
       resolver.assign(option.codes);
