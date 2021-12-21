@@ -1,6 +1,6 @@
 {
   "name": "@zenweb/messagecode",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Zenweb MessageCode module",
   "exports": "./dist/index.js",
   "typings": "./dist/index.d.ts",
