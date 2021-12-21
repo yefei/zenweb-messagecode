@@ -1,7 +1,17 @@
-'use strict';
+import { Core } from '@zenweb/core';
 
-class MessageCodeError extends Error {
-  constructor(code, params) {
+export type CodeMap = { [key: string]: string };
+export type ParamMap = { [key: string]: any };
+
+export interface MessageCodeOption {
+  codes?: CodeMap;
+}
+
+export class MessageCodeError extends Error {
+  code: string;
+  params: ParamMap;
+
+  constructor(code: string, params?: ParamMap) {
     super(code);
     this.name = 'MessageCodeError';
     this.code = code;
@@ -10,27 +20,17 @@ class MessageCodeError extends Error {
 }
 
 class MessageCodeResolver {
-  constructor() {
-    this._codes = {};
-  }
+  private _codes: CodeMap = {};
 
-  /**
-   * @param {string} code
-   * @param {string} message
-   */
-  set(code, message) {
+  set(code: string, message: string) {
     this._codes[code] = message;
   }
 
-  assign(codes) {
+  assign(codes: CodeMap) {
     Object.assign(this._codes, codes);
   }
 
-  /**
-   * @param {string} code
-   * @returns {string}
-   */
-  get(code) {
+  get(code: string) {
     const codes = code.split('.');
     for (let i = codes.length; i > 0; i--) {
       const message = this._codes[codes.slice(0, i).join('.')];
@@ -38,12 +38,7 @@ class MessageCodeResolver {
     }
   }
 
-  /**
-   * @param {string} code
-   * @param {*} params
-   * @returns {string}
-   */
-  format(code, params) {
+  format(code: string, params?: ParamMap) {
     const message = this.get(code);
     if (message && params) {
       return message.replace(/{(\w+)}/g, function(match, key) { 
@@ -57,11 +52,7 @@ class MessageCodeResolver {
   }
 }
 
-/**
- * 安装 helper 服务
- * @param {import('@zenweb/core').Core} core
- */
-function setup(core, option) {
+export function setup(core: Core, option?: MessageCodeOption) {
   const resolver = new MessageCodeResolver();
   core.setupAfter(() => {
     for (const { name } of core.loaded) {
@@ -76,10 +67,18 @@ function setup(core, option) {
       resolver.assign(option.codes);
     } 
   });
+  core.koa.context.messageCodeResolver = resolver;
   Object.defineProperty(core, 'messageCodeResolver', { value: resolver });
 }
 
-module.exports = {
-  setup,
-  MessageCodeError,
-};
+declare module '@zenweb/core' {
+  interface Core {
+    messageCodeResolver: MessageCodeResolver;
+  }
+}
+
+declare module 'koa' {
+  interface DefaultContext {
+    messageCodeResolver: MessageCodeResolver;
+  }
+}
