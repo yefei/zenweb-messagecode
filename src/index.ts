@@ -1,7 +1,7 @@
-import fs = require('node:fs/promises');
+import fs = require('fs/promises');
 import { Core } from '@zenweb/core';
 import Debug from 'debug';
-import path = require('node:path');
+import path = require('path');
 
 const debug = Debug('zenweb:messagecode')
 

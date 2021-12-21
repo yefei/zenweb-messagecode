@@ -8,8 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "rm -fr dist && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "tsc --build --clean && tsc"
   },
   "author": {
     "name": "YeFei",
