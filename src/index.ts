@@ -24,7 +24,7 @@ export class MessageCodeError extends Error {
   }
 }
 
-class MessageCodeResolver {
+export class MessageCodeResolver {
   private _codes: CodeMap = {};
 
   set(code: string, message: string) {
