@@ -1,4 +1,4 @@
-import fs = require('fs/promises');
+import { promises as fs } from 'fs';
 import { Core } from '@zenweb/core';
 import Debug from 'debug';
 import path = require('path');
