@@ -64,7 +64,7 @@ export function setup(core: Core, option?: MessageCodeOption) {
       try {
         var modPath = require.resolve(`${name}`);
       } catch {
-        debug('can not resolve module:', name);
+        debug('cannot resolve module:', name);
         continue;
       }
       const codeFile = path.join(modPath, 'message-codes.json');
@@ -87,7 +87,7 @@ export function setup(core: Core, option?: MessageCodeOption) {
     } 
   });
   core.koa.context.messageCodeResolver = resolver;
-  Object.defineProperty(core, 'messageCodeResolver', { value: resolver });
+  core.messageCodeResolver = resolver;
 }
 
 declare module '@zenweb/core' {
