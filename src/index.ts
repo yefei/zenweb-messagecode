@@ -1,9 +1,4 @@
-import { promises as fs } from 'fs';
-import { Core } from '@zenweb/core';
-import Debug from 'debug';
-import path = require('path');
-
-const debug = Debug('zenweb:messagecode')
+import { SetupFunction } from '@zenweb/core';
 
 export type CodeMap = { [key: string]: string };
 export type ParamMap = { [key: string]: any };
@@ -57,37 +52,16 @@ export class MessageCodeResolver {
   }
 }
 
-export function setup(core: Core, option?: MessageCodeOption) {
-  const resolver = new MessageCodeResolver();
-  core.setupAfter(async () => {
-    for (const { name } of core.loaded) {
-      try {
-        var modPath = require.resolve(`${name}`);
-      } catch {
-        debug('cannot resolve module:', name);
-        continue;
-      }
-      const codeFile = path.join(modPath, 'message-codes.json');
-      try {
-        await fs.access(codeFile);
-      } catch {
-        continue;
-      }
-      try {
-        var codes = JSON.parse(await fs.readFile(codeFile, { encoding: 'utf-8' }));
-      } catch (e) {
-        debug('load message-codes error:', e);
-        continue;
-      }
-      resolver.assign(codes);
-      debug('loaded message-codes: %s total: %d', modPath, Object.keys(codes).length);
-    }
+export default function setup(option?: MessageCodeOption): SetupFunction {
+  return function messagecode(setup) {
+    setup.debug('option: %o', option);
+    const resolver = new MessageCodeResolver();
     if (option && option.codes) {
       resolver.assign(option.codes);
-    } 
-  });
-  core.koa.context.messageCodeResolver = resolver;
-  core.messageCodeResolver = resolver;
+    }
+    setup.defineCoreProperty('messageCodeResolver', { value: resolver });
+    setup.defineContextProperty('messageCodeResolver', { value: resolver });
+  }
 }
 
 declare module '@zenweb/core' {
